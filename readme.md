@@ -1,6 +1,12 @@
 # TFW - Testing Framework
+Do you have a bunch of scripts that test applications / services during runtime?
 
-TFW enables you to run tests in a automated manner.
+Do you wish to have a unified interface for running those tests instead of using the command line?
+
+Do you require testing evidence?
+
+TFW enables you to do all of this by giving you a unified way of running tests & storing results!
+
 
 ## Tests
 Tests are a collection of one or more tasks.
@@ -139,16 +145,19 @@ Example of a test which will, when it runs successfully, execute "sendmail.exe" 
 Groups are stored in basePath/groups/. Every Group is defined in its own file.
 The group files need to use the file extension ".group".
 Example of a group file called "auth.test". The test name is taken from the filename, hence this tests name is "auth".
-This group
-{
-	"description": "Grouping all auth tests",
-	"tests": [{
-		"name": "auth_sso"
-	},{
-		"name": "auth_mail"
-	}]
-}
+This group contains the two tests "auth_sso" and "auth_mail".
 
+	{
+	  "description": "Grouping all auth tests",
+	  "tests": [{
+		"name": "auth_sso"
+	  },{
+		"name": "auth_mail"
+	  }]
+	}
+	
+## Logs
+Extensive logs are saved in the basePath/logs folder.
 
 ## Web Interface
 The web interface is available under (assuming you use Tomcat with default port 8080)
