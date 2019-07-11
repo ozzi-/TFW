@@ -20,6 +20,13 @@
 		page = page.replace(/[^A-Za-z0-9]/g,'');
 		doRequest("GET", page+".html", pageLogic, []);
 		
+		setTimeout(function() {
+			var loader = document.getElementById("loader");
+			if(loader!=undefined){
+				loader.style.visibility="visible";		
+			}
+		}, 300); 
+		
 		function pageLogic (response){
 			document.getElementById("container").innerHTML = response;
 			if(page=="main"){
@@ -90,7 +97,7 @@
 		<h2 style="float:left"><a href="index.html">TFW</a></h2> <a style="float:right" href="index.html?page=logout">Logout</a>
 		<br><br><hr>
 	</div>
-	<!-- <div class="loader" id="loader"></div>  -->
+	<div class="loader" id="loader"></div>
 
 	<div id="container" class="container">
 		. . .

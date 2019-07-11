@@ -1,6 +1,13 @@
+function removeLoader(){
+	if(document.getElementById("loader")){
+		document.getElementById("loader").remove();					
+	}
+}
+
 function listGroups(groups){
 	var groupsSpan = document.getElementById("testGroups");
 	var groupCount = groups.length;
+	removeLoader();
 	if(sessionStorage.getItem('TFW_Role')==="rw"){
 		var innerHTML = "<table><tr><td><b>Test Group</b></td><td><b>Tests</b></td><td><b>Run</b></td></tr>";
 	}else{
@@ -45,6 +52,7 @@ function back(){
 }
 
 function listResults(results,paramName) {
+	removeLoader();
 	results = results.reverse(); 
 	var resultCount = results.length;
 	var resultsUL = document.getElementById("resultsUL");
@@ -106,6 +114,7 @@ function runTest(res,name,paramName) {
 
 
 function listResult(result) {
+	removeLoader();
 	var style = ' style="color:green;" ';
 	for (var i = 0; i < result.results.length; i++) {
 		if(result.results[i].passed == "false"){
@@ -157,7 +166,8 @@ function basePath(basePath) {
 	}		
 }
 
-function listTests(tests) { 
+function listTests(tests) {
+	removeLoader();
 	var testsSpan = document.getElementById("tests");
 	var testCount = tests.length;
 	if(sessionStorage.getItem('TFW_Role')==="rw"){
