@@ -70,6 +70,7 @@ All configuration is saved as JSON files.
 ### Users
 Users are stored in basePath/users.json.
 Example of two defined users:
+
 	[
 	  {
 		"username": "ozzi",
