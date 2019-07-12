@@ -6,9 +6,8 @@ Do you wish to have a unified interface for running those tests instead of using
 Do you require testing evidence?
 
 TFW enables you to do all of this by giving you a unified way of running tests & storing results!
-![alt text](https://i.imgur.com/3l1mCiy.png)
+![TFW](https://i.imgur.com/mZCtpp4.png)
 
-![alt text](https://i.imgur.com/8fCKPsC.png)
 
 
 ## Tests
@@ -51,6 +50,7 @@ However there are different reasons why a task can fail:
 - The task returned a non zero exit code
 
 If one task failes, the whole test will be marked as failed.
+![example result](https://i.imgur.com/8fCKPsC.png)
 
 
 ## Test Groups
@@ -221,7 +221,7 @@ Example:
                   "results":[
                      {
                         "name":"task1",
-                        "passed":"true",
+                        "passed": true,
                         "description":"Script executed successfully",
                         "output":"TASK 1!!\n",
                         "errorOutput":"",
@@ -233,7 +233,7 @@ Example:
                      },
                      {
                         "name":"task2",
-                        "passed":"true",
+                        "passed":true,
                         "description":"Script executed successfully",
                         "output":"task 2\nnewline\n",
                         "errorOutput":"",
@@ -256,7 +256,7 @@ Example:
                   "results":[
                      {
                         "name":"task1",
-                        "passed":"true",
+                        "passed":true,
                         "description":"Script executed successfully",
                 	    . . .
                      }
@@ -280,7 +280,7 @@ Returns all results for the specific test group.
 			 "results":[
 				{
 				   "name":"task1",
-				   "passed":"true",
+				   "passed":true,
 				   "description":"Script executed successfully",
 				   "output":"\r\nC:\\Users\\ozzi\\Desktop>echo D \r\nD\r\n",
 				   "errorOutput":"",
@@ -293,7 +293,7 @@ Returns all results for the specific test group.
 				    . . . 
 				{
 				   "name":"task2",
-				   "passed":"false",
+				   "passed":false,
 				   "description":"Script returned non zero return code \"2\"",
 				   "output":"\r\nC:\\Users\\ozzi\\Desktop>echo D \r\nD\r\n\r\nC:\\Users\\ozzi\\Desktop>exit 2 \r\n",
 				   "errorOutput":"",
@@ -321,7 +321,7 @@ Returns the latest result for the specific test.
 			"results": [
 				{
 					"name": "task1",
-					"passed": "true",
+					"passed": true,
 					"description": "Script executed successfully",
 					"output": "\r\nC:\\WINDOWS\\system32>echo D \r\nD\r\n",
 					"errorOutput": "",
@@ -333,7 +333,7 @@ Returns the latest result for the specific test.
 				},
 				{
 					"name": "task2",
-					"passed": "true",
+					"passed": true,
 					"description": "Script executed successfully",
 					"output": "\r\nC:\\WINDOWS\\system32>echo foo \r\nfoo\r\n",
 					"errorOutput": "",
@@ -345,7 +345,7 @@ Returns the latest result for the specific test.
 				},
 				{
 					"name": "task3",
-					"passed": "true",
+					"passed": true,
 					"description": "Script executed successfully",
 					"output": "\r\nC:\\WINDOWS\\system32>echo foooo \r\nfoooo\r\n",
 					"errorOutput": "",
@@ -371,7 +371,7 @@ Returns the latest result for the specific test group.
 			 "results":[
 				{
 				   "name":"task1",
-				   "passed":"true",
+				   "passed":true,
 				   "description":"Script executed successfully",
 				   "output":"\r\nC:\\Users\\ozzi\\Desktop>echo D \r\nD\r\n",
 				   "errorOutput":"",
@@ -409,7 +409,7 @@ Returns the test results for the specific test run.
 		   "results":[
 			  {
 				 "name":"task1",
-				 "passed":"true",
+				 "passed":true,
 				 "description":"Script executed successfully",
 				 "output":"\r\nC:\\WINDOWS\\system32>echo D \r\nD\r\n",
 				 "errorOutput":"",
@@ -421,7 +421,7 @@ Returns the test results for the specific test run.
 			  },
 			  {
 				 "name":"task2",
-				 "passed":"true",
+				 "passed":true,
 				 "description":"Script executed successfully",
 				 "output":"\r\nC:\\WINDOWS\\system32>echo foo \r\nfoo\r\n",
 				 "errorOutput":"",
@@ -433,7 +433,7 @@ Returns the test results for the specific test run.
 			  },
 			  {
 				 "name":"task3",
-				 "passed":"true",
+				 "passed":true,
 				 "description":"Script executed successfully",
 				 "output":"\r\nC:\\WINDOWS\\system32>echo foooo \r\nfoooo\r\n",
 				 "errorOutput":"",
@@ -457,7 +457,7 @@ Returns the test group results for the specific test run.
 	   "results":[
 		  {
 			 "name":"task1",
-			 "passed":"true",
+			 "passed":true,
 			 "description":"Script executed successfully",
 			 "output":"\r\nC:\\WINDOWS\\system32>echo D \r\nD\r\n",
 			 "errorOutput":"",
@@ -469,7 +469,7 @@ Returns the test group results for the specific test run.
 		  },
 		  {
 			 "name":"task2",
-			 "passed":"true",
+			 "passed":true,
 			 "description":"Script executed successfully",
 			 "output":"\r\nC:\\WINDOWS\\system32>echo fo \r\nfo\r\n",
 			 "errorOutput":"",
@@ -481,7 +481,7 @@ Returns the test group results for the specific test run.
 		  },
 		  {
 			 "name":"task3",
-			 "passed":"true",
+			 "passed":true,
 			 "description":"Script executed successfully",
 			 "output":"\r\nC:\\WINDOWS\\system32>echo fooo \r\nfooo\r\n",
 			 "errorOutput":"",
@@ -493,7 +493,7 @@ Returns the test group results for the specific test run.
 		  },
 		  {
 			 "name":"task1",
-			 "passed":"false",
+			 "passed":false,
 			 "description":"Script execution longer than timeout",
 			 "output":"\r\nC:\\WINDOWS\\system32>echo fo \r\nfo\r\n\r\nC:\\WINDOWS\\system32>choice /t 10 /C JN /CS /D J \r\n[J,N]?",
 			 "errorOutput":"",
@@ -505,7 +505,7 @@ Returns the test group results for the specific test run.
 		  },
 		  {
 			 "name":"task2",
-			 "passed":"false",
+			 "passed":false,
 			 "description":"Script returned non zero return code \"2\"",
 			 "output":"\r\nC:\\WINDOWS\\system32>echo D \r\nD\r\n\r\nC:\\WINDOWS\\system32>exit 2 \r\n",
 			 "errorOutput":"",
@@ -535,13 +535,50 @@ Two states exist, "running" or "done".
 ### /TFW/getTestList
 Returns all tests.
 
-      [{"name":"mail"},{"name":"auth"}]
+    [
+	  {
+        "name": "windows",
+        "lastRunDate": "2019-07-11 14:50:45",
+        "lastRunPassed": true
+      },
+      {
+        "name": "windows2",
+        "lastRunDate": "2019-07-08 14:06:29",
+        "lastRunPassed": false
+      }
+	]
 
 ### /TFW/getTestGroupList
 Returns all test groups.
 
-	[{"name":"windowsgroup","tests":[{"name":"windows"},{"name":"windows2"}]},{"name":"authgroup","tests":[{"name":"auth"},{"name":"mail"}]}]
-
+	[
+	   {
+		  "name":"windowsgroup",
+		  "lastRunDate":"2019-07-12 14:41:34",
+		  "lastRunPassed":true,
+		  "tests":[
+			 {
+				"name":"windows"
+			 },
+			 {
+				"name":"windows2"
+			 }
+		  ]
+	   },
+	   {
+		  "name":"auth",
+		  "lastRunDate":"2019-07-12 15:43:20",
+		  "lastRunPassed":false,
+		  "tests":[
+			 {
+				"name":"smtp"
+			 },
+			 {
+				"name":"sso"
+			 }
+		  ]
+	   }
+	]
 ### /TFW/reload
 Reloads the users.json file.
 Requires the 'rw' role.
