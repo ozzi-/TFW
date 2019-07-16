@@ -6,9 +6,12 @@ Do you wish to have a unified interface for running those tests instead of using
 Do you require testing evidence?
 
 TFW enables you to do all of this by giving you a unified way of running tests & storing results!
+
+## Main Page
 ![TFW](https://i.imgur.com/mZCtpp4.png)
 
-
+## Results Page
+![TFW](https://i.imgur.com/wdiePMV.png)
 
 ## Tests
 Tests are a collection of one or more tasks.
