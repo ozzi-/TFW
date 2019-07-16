@@ -268,6 +268,30 @@ Example:
             }
       ]
 
+### /TFW/getTest/{testname}
+Returns the test configuration JSON file for the specific test.
+
+	{
+	  "settings": {
+		"successhook": "C:\\Program Files (x86)\\Reset\\reset.exe"
+	  },
+	  "test": {
+	    "description": "test_windows",
+	    "tasks": [{
+	      "name": "task1",
+	      "path": "script1.bat",
+	      "timeout": 1
+	      },{
+	      "name": "task2",
+	      "path": "script2.bat",
+	      "timeout": 1
+	      },{
+	      "name": "task3",
+	      "path": "script3.bat"
+	      }]
+	  } 
+	}
+
 
 ### /TFW/getGroupResults/{testname}
 Returns all results for the specific test group.
