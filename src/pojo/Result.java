@@ -26,7 +26,7 @@ public class Result {
 	public JsonObject toJsonObject() {
 		JsonObject res = new JsonObject();
 		res.addProperty("name", name);
-		res.addProperty("passed", pass?"true":"false");
+		res.addProperty("passed", pass);
 		res.addProperty("description", text);
 		res.addProperty("output", output);
 		res.addProperty("errorOutput", errorOutput);

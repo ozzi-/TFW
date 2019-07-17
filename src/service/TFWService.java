@@ -3,7 +3,6 @@ package service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import javax.ws.rs.Consumes;
@@ -34,7 +33,6 @@ import tfw.Testing;
 
 @Path("/")
 public class TFWService {
-
 	private static final String headerNameSessionID = "X-TFW-Session-ID";
 	
 	@POST
@@ -77,26 +75,7 @@ public class TFWService {
 			return Response.status(203).entity("NOK").build();
 		}
 	}
-
-	private String checkLogin(HttpHeaders headers, boolean requiresWritePrivilege) {
-		if (headers != null && headers.getRequestHeader(headerNameSessionID) != null && headers.getRequestHeader(headerNameSessionID).size() > 0) { 
-			String sessionIdentifier = headers.getRequestHeader(headerNameSessionID).get(0);
-			Session session = SessionManagement.getSessionFormIdentifier(sessionIdentifier);
-			if (session != null) {
-				if(requiresWritePrivilege &&  !session.getRole().equals("rw")) {
-					Log.log(Level.WARNING, "Login check failed - user "+session.getUsername()+" attempted to execute API call which he does not have sufficient privileges for.");
-				}else {
-					return session.getUsername();					
-				}
-			}else {
-				Log.log(Level.INFO, "Login check failed due to session provided not found in session storage (hs)");
-			}
-		}else {
-			Log.log(Level.INFO, "Login check failed due to missing header");			
-		}
-		return null;
-	}
-	
+		
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/logout")
@@ -171,14 +150,7 @@ public class TFWService {
 		test.name = groupName;
 		test.start = curMil;
 		// Merging Tests
-		for (Object testObj : tests) {
-			JSONObject testJObj = (JSONObject) testObj;
-			String testName = testJObj.getString("name");
-			test.description += testName + ",";
-			JSONObject objd = Helpers.loadConfig(PathFinder.getSpecificTestPath(testName));
-			Test testD = Helpers.parseConfig(objd, testName);
-			test.tasks.addAll(testD.tasks);
-		}
+		mergeTestsToGroupTest(tests, test);
 		Helpers.createRunningFile(test, true);
 		Testing.runTestInThread(test, true);
 
@@ -254,13 +226,77 @@ public class TFWService {
 		String path = PathFinder.getSpecificTestGroupResultPath(groupName, handle, false);
 		return getResultInternal(path);
 	}
+	
+	@GET
+	@Path("/getTest/{testname}")
+	public Response getTest(@PathParam("testname") String testName, @Context HttpHeaders headers) throws Exception {
+		String userName = checkLogin(headers,false);
+		if ( userName == null) {
+			return unauthorizedResponse();
+		}
+		String path = PathFinder.getSpecificTestPath(testName);	
+		return getResultInternal(path);
+	}
+	
+	@GET
+	@Path("/getGroup/{groupname}")
+	public Response getGroup(@PathParam("groupname") String groupName, @Context HttpHeaders headers) throws Exception {
+		String userName = checkLogin(headers,false);
+		if ( userName == null) {
+			return unauthorizedResponse();
+		}
+		JsonElement test = null;
+		try {
+			ArrayList<String> paths = getTestPathsOfGroupName(groupName);
+			ArrayList<JsonElement> tests = getJsonElementsOfPath(paths);
+			test = mergeTests(tests,groupName);
+		} catch (IOException e) {
+			throw new Exception("Cannot find test result!");
+		}
+		
+		return Response.status(200).entity(test.toString()).type("application/json").build();
+	}
+
+	private JsonElement mergeTests(ArrayList<JsonElement> tests, String groupName) {
+		JsonObject merged = new JsonObject();
+		JsonObject settingsObj = new JsonObject();
+		JsonObject testObj = new JsonObject();
+		JsonArray tasksArr = new JsonArray();
+
+		JsonElement finalSuccessHook = null;
+		JsonElement finalFailureHook = null;
+		String description = "Group Test '"+groupName+"'";
+		for (JsonElement test : tests) {
+			JsonElement successHook = test.getAsJsonObject().get("settings").getAsJsonObject().get("successhook");
+			JsonElement failureHook = test.getAsJsonObject().get("settings").getAsJsonObject().get("failurehook");
+			if(successHook!=null) {
+				finalSuccessHook=successHook;
+			}
+			if(failureHook!=null) {
+				finalFailureHook=failureHook;
+			}
+			JsonArray tasks = test.getAsJsonObject().get("test").getAsJsonObject().get("tasks").getAsJsonArray();
+			for (JsonElement task : tasks) {
+				tasksArr.add(task);
+			}
+		}
+		if(finalSuccessHook != null) {
+			settingsObj.add("successhook", finalSuccessHook);
+		}
+		if(finalFailureHook != null) {
+			settingsObj.add("failurehook", finalFailureHook);
+		}
+		testObj.addProperty("description", description);
+		merged.add("settings", settingsObj);
+		testObj.add("tasks", tasksArr);
+		merged.add("test", testObj);
+		return merged;
+	}
 
 	@GET
 	@Path("/getResult/{testname}/{handle}")
 	public Response getLatestResultByName(@PathParam("testname") String testName, @PathParam("handle") String handle, @Context HttpHeaders headers)
 			throws Exception {
-		TimeUnit.SECONDS.sleep(2);
-
 		String userName = checkLogin(headers,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
@@ -316,11 +352,15 @@ public class TFWService {
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
+
 		JsonArray testsArray = new JsonArray();
 		ArrayList<String> listOfFiles = Helpers.getListOfFiles(PathFinder.getTestsPath(), PathFinder.getTestLabel());
 		for (String name : listOfFiles) {
 			JsonObject test = new JsonObject();
-			test.addProperty("name", name.substring(0, name.length() - PathFinder.getTestLabel().length()));
+			String testName = name.substring(0, name.length() - PathFinder.getTestLabel().length());
+			ArrayList<String> listResults = Helpers.getListOfFiles(PathFinder.getTestResultsPath(testName), PathFinder.getDataLabel());
+			test.addProperty("name", testName);
+			enrichLastRunData(test, testName, listResults);
 			testsArray.add(test);
 		}
 		return Response.status(200).entity(testsArray.toString()).type("application/json").build();
@@ -336,9 +376,9 @@ public class TFWService {
 		JsonArray groupsArray = new JsonArray();
 		ArrayList<String> listOfFiles = Helpers.getListOfFiles(PathFinder.getGroupsPath(), PathFinder.getGroupLabel());
 		for (String name : listOfFiles) {
-			String content = Helpers.readFile(PathFinder
-					.getSpecificGroupPath(name.substring(0, name.length() - PathFinder.getGroupLabel().length())));
-			JsonObject tests = parseTestGroup(name, content);
+			String testName = name.substring(0, name.length() - PathFinder.getGroupLabel().length());
+			String content = Helpers.readFile(PathFinder.getSpecificGroupPath(testName));
+			JsonObject tests = parseTestGroup(name, content);			
 			groupsArray.add(tests);
 		}
 		return Response.status(200).entity(groupsArray.toString()).type("application/json").build();
@@ -392,13 +432,35 @@ public class TFWService {
 		}
 	}
 
-	private JsonObject parseTestGroup(String name, String content) {
+	private JsonObject parseTestGroup(String name, String content) throws Exception {
 		JsonObject testGroup = new JsonObject();
-		String propertyName = name.substring(0, name.length() - PathFinder.getGroupLabel().length());
-		testGroup.addProperty("name", propertyName);
-
 		JsonArray testGroupTests = new JsonArray();
 		JsonObject test = new JsonParser().parse(content).getAsJsonObject();
+		String groupName = name.substring(0, name.length() - PathFinder.getGroupLabel().length());
+		testGroup.addProperty("name", groupName);		
+		
+		ArrayList<String> listResults = Helpers.getListOfFiles(PathFinder.getGroupTestResultsPath(groupName), PathFinder.getDataLabel());
+		String lastRunDate = "";
+		boolean passed = true;
+		
+		if(listResults.size()>0) {
+			long newest = getNewest(listResults);
+			String handle = String.valueOf(newest);
+			String path = PathFinder.getSpecificTestGroupResultPath(groupName, handle, false);
+			String lastRun = Helpers.readFile(path);			
+			JsonObject lastRunJO = new JsonParser().parse(lastRun).getAsJsonObject();
+			lastRunDate = lastRunJO.get("testStartString").getAsString();
+			JsonArray lastRunResults = lastRunJO.get("results").getAsJsonArray();
+			passed = true;
+			for (JsonElement lastRunResult : lastRunResults) {
+				if(lastRunResult.getAsJsonObject().get("passed").getAsString().equals("false")) {
+					passed = false;
+				}
+			}
+		}
+		testGroup.addProperty("lastRunDate", lastRunDate);
+		testGroup.addProperty("lastRunPassed", passed);
+		
 		JsonArray tests = (JsonArray) test.get("tests");
 		for (Object testObj : tests) {
 			JsonObject testO = (JsonObject) testObj;
@@ -406,6 +468,29 @@ public class TFWService {
 		}
 		testGroup.add("tests", testGroupTests);
 		return testGroup;
+	}
+	
+
+	private void enrichLastRunData(JsonObject test, String testName, ArrayList<String> listResults) throws Exception {
+		boolean passed = true;
+		String lastRunDate = "";
+		if(listResults.size()>0) {
+			long newest = getNewest(listResults);
+			String handle = String.valueOf(newest);
+			String path = PathFinder.getSpecificTestResultPath(testName, handle, false);
+			String lastRun = Helpers.readFile(path);
+			JsonObject lastRunJO = new JsonParser().parse(lastRun).getAsJsonObject();
+			lastRunDate = lastRunJO.get("testStartString").getAsString();
+			JsonArray lastRunResults = lastRunJO.get("results").getAsJsonArray();
+			passed = true;
+			for (JsonElement lastRunResult : lastRunResults) {
+				if(lastRunResult.getAsJsonObject().get("passed").getAsString().equals("false")) {
+					passed = false;
+				}
+			}
+		}
+		test.addProperty("lastRunDate", lastRunDate);
+		test.addProperty("lastRunPassed", passed);
 	}
 
 	private long getNewest(ArrayList<String> listOfFiles) {
@@ -418,5 +503,70 @@ public class TFWService {
 			}
 		}
 		return newest;
+	}
+	
+	private ArrayList<JsonElement> getJsonElementsOfPath(ArrayList<String> paths) throws Exception {
+		JsonParser parser = new JsonParser();
+		ArrayList<JsonElement> elements = new ArrayList<JsonElement>();
+		for (String path : paths) {
+			String testContent = Helpers.readFile(path);
+			JsonElement testContentJSON = parser.parse(testContent);
+			elements.add(testContentJSON);
+		}
+		return elements;
+	}
+
+	private ArrayList<String> getTestPathsOfGroupName(String groupName) throws Exception {
+		String path = PathFinder.getSpecificGroupPath(groupName);
+		String result = Helpers.readFile(path);
+		ArrayList<String> paths = new ArrayList<String>();
+		
+		JsonParser parser = new JsonParser();
+		JsonElement jsonElement = parser.parse(result);
+		
+		JsonArray groupTestsArray = jsonElement.getAsJsonObject().get("tests").getAsJsonArray();
+		for (JsonElement testElement : groupTestsArray) {
+			String testName = testElement.getAsJsonObject().get("name").getAsString();
+			String testPath = PathFinder.getSpecificTestPath(testName);	
+			paths.add(testPath);
+		}
+		return paths;
+	}
+	
+	private void mergeTestsToGroupTest(JSONArray tests, Test test) throws Exception {
+		for (Object testObj : tests) {
+			JSONObject testJObj = (JSONObject) testObj;
+			String testName = testJObj.getString("name");
+			test.description += testName + ",";
+			JSONObject objd = Helpers.loadConfig(PathFinder.getSpecificTestPath(testName));
+			Test testD = Helpers.parseConfig(objd, testName);
+			if(testD.successHook != null) {
+				test.successHook = testD.successHook;
+			}
+			if(testD.failureHook != null) {
+				test.failureHook = testD.failureHook;
+			}
+			test.tasks.addAll(testD.tasks);
+		}
+	}
+
+
+	private String checkLogin(HttpHeaders headers, boolean requiresWritePrivilege) {
+		if (headers != null && headers.getRequestHeader(headerNameSessionID) != null && headers.getRequestHeader(headerNameSessionID).size() > 0) { 
+			String sessionIdentifier = headers.getRequestHeader(headerNameSessionID).get(0);
+			Session session = SessionManagement.getSessionFormIdentifier(sessionIdentifier);
+			if (session != null) {
+				if(requiresWritePrivilege &&  !session.getRole().equals("rw")) {
+					Log.log(Level.WARNING, "Login check failed - user "+session.getUsername()+" attempted to execute API call which he does not have sufficient privileges for.");
+				}else {
+					return session.getUsername();					
+				}
+			}else {
+				Log.log(Level.INFO, "Login check failed due to session provided not found in session storage (hs)");
+			}
+		}else {
+			Log.log(Level.INFO, "Login check failed due to missing header");			
+		}
+		return null;
 	}
 }

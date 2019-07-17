@@ -2,12 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>spain</groupId>
+	<groupId>TFW</groupId>
 	<artifactId>TFW</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+  	<version>releaseTFW-${build.number}</version>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<packaging>war</packaging>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+      	<finalName>${project.version}-${build.number}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -53,4 +57,5 @@
 			<version>2.20</version>
 		</dependency>
 	</dependencies>
+
 </project>

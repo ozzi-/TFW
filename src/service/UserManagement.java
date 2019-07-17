@@ -41,6 +41,7 @@ public class UserManagement {
 		try {
 			usersJson = Helpers.readFile(usersFile);
 		} catch (Exception e) {
+			Log.log(Level.SEVERE, "Cannot load users file");
 			throw new Exception("Cannot load users file "+usersFile);
 		}
 		JsonArray usersJA =  new JsonParser().parse(usersJson).getAsJsonArray();

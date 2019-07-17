@@ -62,7 +62,7 @@ public class Helpers {
 	}
 	
 	public static String readFile(String path) throws Exception {
-		Log.log(Level.FINE, "Reading file "+path);
+		Log.log(Level.FINEST, "Reading file "+path);
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(Paths.get(path));

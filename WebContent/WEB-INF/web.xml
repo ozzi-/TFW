@@ -3,11 +3,11 @@
     xmlns="http://xmlns.jcp.org/xml/ns/javaee"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
     id="WebApp_ID" version="3.1">
-    <display-name>Jersey Demo</display-name>
+    <display-name>TFW</display-name>
 
     <!-- Define ServletContainer of Jersey -->
     <servlet>
-        <servlet-name>JerseyDemo</servlet-name>
+        <servlet-name>TFW</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
@@ -18,7 +18,7 @@
 
     <!-- Map all the URLs to the Jersey ServletContainer -->
     <servlet-mapping>
-        <servlet-name>JerseyDemo</servlet-name>
+        <servlet-name>TFW</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
     
