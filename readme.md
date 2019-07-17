@@ -146,6 +146,17 @@ Example of a test which will, when it runs successfully, execute "sendmail.exe" 
 	  } 
 	}
 
+When using groups, the last hooks in order will be used. 
+
+Example: The group consists of three tests: "1", "2", "3".
+
+"1" defines a success hook
+
+"2" defines a success hook and a failure hook
+
+"3" defines a failure hook
+
+This means the used success hook is from "2" and the failure hook from "3".
 
 ### Groups
 Groups are stored in basePath/groups/. Every Group is defined in its own file.
@@ -292,6 +303,35 @@ Returns the test configuration JSON file for the specific test.
 	  } 
 	}
 
+### /TFW/getGroup/{groupname}
+Generates a test configuration file consisting of all merged tests of the specific group.
+
+	{
+	  "settings": {
+		"successhook": "C:\\Program Files (x86)\\Reset\\reset.exe"
+	  },
+	  "test": {
+	    "description": "Group Test 'test_windows'",
+	    "tasks": [{
+	      "name": "task1",
+	      "path": "script1.bat",
+	      "timeout": 1
+	      },{
+	      "name": "task2",
+	      "path": "script2.bat",
+	      "timeout": 1
+	      },{
+	      "name": "task3",
+	      "path": "script3.bat"
+	      },{
+	      "name": "task1",
+	      "path": "script2_1.bat"
+	      },{
+	      "name": "task2",
+	      "path": "script2_2.bat"
+	      }]
+	  } 
+	}
 
 ### /TFW/getGroupResults/{testname}
 Returns all results for the specific test group.
