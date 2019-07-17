@@ -53,7 +53,7 @@ However there are different reasons why a task can fail:
 - The task returned a non zero exit code
 
 If one task failes, the whole test will be marked as failed.
-![example result](https://i.imgur.com/8fCKPsC.png)
+![example result](https://i.imgur.com/D7YzZ4q.png)
 
 
 ## Test Groups
