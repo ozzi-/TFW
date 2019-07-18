@@ -136,7 +136,8 @@ function listResults(results,paramName) {
 	}
 	testName.innerHTML = name;
 	
-	results = results.reverse(); 
+	results = results.sort((a, b) => (a.handle < b.handle) ? 1 : -1);
+	
 	var resultCount = results.length;
 	var resultsSpan = document.getElementById("resultsSpan");
 	if(resultCount==0){
