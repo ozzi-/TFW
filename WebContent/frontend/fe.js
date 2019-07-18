@@ -182,10 +182,10 @@ function listResult(result) {
 	for (var i = 0; i < result.results.length; i++) {
 		resultsSpan.innerHTML += "<h3>"+result.results[i].name + " " + (result.results[i].passed == false ? cloud : sun) + "</h3>"
 				+ "<b>Result</b>: <i>"+ escapeHtml(result.results[i].description) + "</i><br>"
-				+ "<b>Output:</b> "+ escapeHtml(result.results[i].output) + " <br> " 
+				+ "<b>Output:</b> "+ escapeHtml(result.results[i].output).replace(/\n/g, "<br />") + " <br> " 
 				+ "<b>Error Output:</b> " + escapeHtml(result.results[i].errorOutput) + "<br>"
 				+ "<b>Runtime: </b> "+ escapeHtml(result.results[i].runTimeInMS) + " ms<br> "
-				+ "<br><br>";
+				+ "<br><hr><br>";
 	}
 }
 
