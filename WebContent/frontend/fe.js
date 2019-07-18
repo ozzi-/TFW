@@ -320,6 +320,7 @@ function back(){
 }
 
 function basePath(basePath) { 
+	removeLoader();
 	var basePathSpans = document.getElementsByClassName("basePath");
 	for(let i = 0; i < basePathSpans.length; i++){
 		basePathSpans[i].innerHTML = basePath;
