@@ -30,7 +30,7 @@ public class Testing {
 		return results;
 	}
 	
-	public static void runTestInThread(Test test, boolean group) throws Exception {
+	public static void runTestInThread(Test test, boolean group, String userName) throws Exception {
 		new Thread() {
 			public void run() {
 				Results results = Testing.runTest(test);
@@ -50,7 +50,7 @@ public class Testing {
 					runPostHook(test.failureHook);
 				}
 				try {
-					Persistence.persistAsJSONFile(test, results, group);
+					Persistence.persistAsJSONFile(test, results, group, userName);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

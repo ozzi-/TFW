@@ -16,11 +16,12 @@ import pojo.Results;
 import pojo.Test;
 
 public class Persistence {
-	public static String persistAsJSON(Test test, Results results) {
+	public static String persistAsJSON(Test test, Results results, String userName) {
 		JsonObject res = new JsonObject();
 		Log.log(Level.FINE, "Persisting test "+test.name+" as JSON");
 		res.addProperty("testName", test.name);
 		res.addProperty("testStartTimestamp", test.start);
+		res.addProperty("testRunBy", userName);
 		res.addProperty("testStartString", Helpers.getDateFromUnixTimestamp(test.start));
 		res.addProperty("description", test.description);
 			JsonArray resultsArray = new JsonArray();
@@ -32,8 +33,8 @@ public class Persistence {
 	}
 
 	
-	public static String persistAsJSONFile(Test test, Results results, boolean group) throws Exception {
-		String json = persistAsJSON(test, results);
+	public static String persistAsJSONFile(Test test, Results results, boolean group, String userName) throws Exception {
+		String json = persistAsJSON(test, results, userName);
 		String handle = String.valueOf(test.start);
 		String fullPersistencePath;
 		if(group) {

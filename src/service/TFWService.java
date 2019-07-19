@@ -125,7 +125,7 @@ public class TFWService {
 
 		test.start = System.currentTimeMillis();
 		Helpers.createRunningFile(test, false);
-		Testing.runTestInThread(test, false);
+		Testing.runTestInThread(test, false, userName);
 
 		JsonObject resp = new JsonObject();
 		resp.addProperty("name", test.name);
@@ -153,7 +153,7 @@ public class TFWService {
 		// Merging Tests
 		mergeTestsToGroupTest(tests, test);
 		Helpers.createRunningFile(test, true);
-		Testing.runTestInThread(test, true);
+		Testing.runTestInThread(test, true, userName);
 
 		JsonObject resp = new JsonObject();
 		resp.addProperty("name", groupName);
