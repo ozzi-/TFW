@@ -190,11 +190,8 @@ function listResult(result) {
 }
 
 function listTestContent(result){
-	console.log(result);
 	var form = createTestMask(result);
 	var testContent = document.getElementById("testContent");
-//	testContentJSON = JSON.stringify(result , null, 2);
-//	console.log(testContentJSON);
 	testContent.append(form);
 }
 

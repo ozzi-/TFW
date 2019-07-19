@@ -3,6 +3,7 @@ package service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import javax.ws.rs.Consumes;
@@ -170,8 +171,7 @@ public class TFWService {
 		}
 		JsonArray resultsArray = new JsonArray();
 		try {
-			ArrayList<String> listOfFiles = Helpers.getListOfFiles(PathFinder.getTestResultsPath(testName),
-					PathFinder.getDataLabel());
+			ArrayList<String> listOfFiles = Helpers.getListOfFiles(PathFinder.getTestResultsPath(testName), PathFinder.getDataLabel());
 			getResultsInternal(testName, resultsArray, listOfFiles, false);
 		} catch (Exception e) {
 			throw new Exception("Cannot load or parse test result");
@@ -493,16 +493,22 @@ public class TFWService {
 		test.addProperty("lastRunPassed", passed);
 	}
 
-	private long getNewest(ArrayList<String> listOfFiles) {
-		long old = 0;
-		long newest = 0;
-		for (String handle : listOfFiles) {
-			long current = Long.valueOf(handle.substring(0, handle.length() - PathFinder.getDataLabel().length()));
-			if (current > old) {
-				newest = current;
-			}
+	private long getNewest(ArrayList<String> toSortAL) {
+		int elementCount = toSortAL.size();
+		if(elementCount==0) { 
+			return 0;
 		}
-		return newest;
+		Long[] toSort = new Long[elementCount];
+		int i = 0;
+		for (String string : toSortAL) {
+			toSort[i++] = cutDataLabelFromString(string);
+		}
+		Arrays.parallelSort(toSort);
+		return toSort[elementCount-1];
+	}
+
+	private Long cutDataLabelFromString(String strng) {
+		return Long.valueOf(strng.substring(0, strng.length() - PathFinder.getDataLabel().length()));
 	}
 	
 	private ArrayList<JsonElement> getJsonElementsOfPath(ArrayList<String> paths) throws Exception {
