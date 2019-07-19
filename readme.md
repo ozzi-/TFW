@@ -230,6 +230,7 @@ Example:
                "result":{
                   "testName":"example",
                   "testStartTimestamp":1560956995338,
+				  "testRunBy": "ozzi",
                   "testStartString":"2019-06-19 17:09:55",
                   "description":"Example",
                   "results":[
@@ -265,6 +266,7 @@ Example:
                "result":{
                   "testName":"example",
                   "testStartTimestamp":1559312003986,
+				  "testRunBy": "ozzi",
                   "testStartString":"2019-05-31 16:13:23",
                   "description":"Example",
                   "results":[
@@ -342,6 +344,7 @@ Returns all results for the specific test group.
 		  "result":{
 			 "testName":"windowsgroup",
 			 "testStartTimestamp":1559295627973,
+			 "testRunBy": "ozzi",
 			 "testStartString":"2019-05-31 11:40:27",
 			 "description":"Group Test 'windowsgroup' consisting of tests: windows,windows2,",
 			 "results":[
@@ -383,6 +386,7 @@ Returns the latest result for the specific test.
 		{
 			"testName": "windows",
 			"testStartTimestamp": 1562668638877,
+			"testRunBy": "ozzi",
 			"testStartString": "2019-07-09 12:37:18",
 			"description": "test_windows",
 			"results": [
@@ -433,6 +437,7 @@ Returns the latest result for the specific test group.
 		  "result":{
 			 "testName":"windowsgroup",
 			 "testStartTimestamp":1559295627973,
+			 "testRunBy": "ozzi",
 			 "testStartString":"2019-05-31 11:40:27",
 			 "description":"Group Test 'windowsgroup' consisting of tests: windows,windows2,",
 			 "results":[
@@ -471,6 +476,7 @@ Returns the test results for the specific test run.
 		{
 		   "testName":"windows",
 		   "testStartTimestamp":1562668638877,
+		   "testRunBy": "ozzi",
 		   "testStartString":"2019-07-09 12:37:18",
 		   "description":"test_windows",
 		   "results":[
@@ -519,6 +525,7 @@ Returns the test group results for the specific test run.
 	{
 	   "testName":"windowsgroup",
 	   "testStartTimestamp":1562589478619,
+	   "testRunBy": "ozzi",
 	   "testStartString":"2019-07-08 14:37:58",
 	   "description":"Group Test 'windowsgroup' consisting of tests: windows,windows2,",
 	   "results":[
