@@ -101,6 +101,9 @@ Passwords are hashed using SHA512 with an prepended salt "TFW_".
 You can use the form provided in the web interface to generate said password hashes.
 /TFW/frontend/index.html?page=hash
 
+Users can be administered by users with the role "a" under the settings page in the frontend.
+![settings page](https://i.imgur.com/g0dlXBv.png)
+
 ### Tests
 All tests are stored in basePath/tests/. Each test is defined in its own file.
 The test files need to use the file extension ".test".

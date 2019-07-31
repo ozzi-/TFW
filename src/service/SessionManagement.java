@@ -70,13 +70,19 @@ public class SessionManagement {
 	}
 
 	public static void destroySession(Session session) {
+		String userName = session.getUsername();
+		destorySessionByUserName(userName);
+	}
+
+	public static void destorySessionByUserName(String userName) {
 		for (Iterator<Session> iterator = hsSafe.iterator(); iterator.hasNext();) {
 			Session sessionInList = iterator.next();
-			if (sessionInList.getUsername().equals(session.getUsername())) {
+			if (sessionInList.getUsername().equals(userName)) {
 				iterator.remove();
-				Log.log(Level.FINE, "Logging out user '"+session.getUsername()+"'");
+				Log.log(Level.FINE, "Destroyed session for user '"+userName+"'");
 				return;
 			}
 		}
+		Log.log(Level.WARNING, "Could not destroy session as none found for user '"+userName+"'");
 	}
 }

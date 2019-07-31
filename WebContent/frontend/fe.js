@@ -6,6 +6,85 @@ var htmlFormatter = function(cell, formatterParams){
     return cell.getValue();
 }
 
+// ************
+// * Settings *
+// ************
+
+function changeOthersPassword(){
+	var username = document.getElementById("changeUsername").value;
+	var password = document.getElementById("changePassword").value;
+	var changeObj = new Object();
+	changeObj.username = username;
+	changeObj.password  = password;
+	doRequestBody("POST", JSON.stringify(changeObj), "application/json", "../changePasswordForUser/", proccessPasswordChangeForUser, true, true);
+	return false;
+}
+
+function createUser(){
+	var username = document.getElementById("createUsername").value;
+	var password = document.getElementById("createPassword").value;
+	var role = document.getElementById("createRole").value;
+	var changeObj = new Object();
+	changeObj.username = username;
+	changeObj.password  = password;
+	changeObj.role  = role;
+	doRequestBody("POST", JSON.stringify(changeObj), "application/json", "../createUser/", processCreateUser, true, true);
+	return false;
+}
+
+function deleteUser(){
+	var username = document.getElementById("deleteUsername").value;
+	var deleteObj = new Object();
+	deleteObj.username = username;
+	doRequestBody("POST", JSON.stringify(deleteObj), "application/json", "../deleteUser/", processDeleteUser, true, true);
+	return false;
+}
+
+
+function changeMyPassword(){
+	var password = document.getElementById("myPassword").value;
+	var passwordObj = new Object();
+	passwordObj.password  = password;
+	doRequestBody("POST", JSON.stringify(passwordObj), "application/json", "../changePassword/", proccessPasswordChange, true, true);
+	return false;
+}
+
+function proccessPasswordChange(response){
+	if(response.status!=200){
+		alert(JSON.parse(response.responseText).error);
+	}else{
+		alert("Password changed, you will be logged out");
+		doLogout();
+	}
+}
+
+function processCreateUser(response){
+	if(response.status!=200){
+		alert(JSON.parse(response.responseText).error);
+	}else{
+		alert("User created");
+		location.reload();
+	}
+}
+
+
+function processDeleteUser(response){
+	if(response.status!=200){
+		alert(JSON.parse(response.responseText).error);
+	}else{
+		alert("User deleted");
+		location.reload();
+	}
+}
+
+function proccessPasswordChangeForUser(response){
+	if(response.status!=200){
+		alert(JSON.parse(response.responseText).error);
+	}else{
+		alert("Password changed");
+		location.reload();
+	}
+}
 // *************
 // * Login/out *
 // *************
@@ -15,13 +94,14 @@ function doLogin(){
 	var loginObj = new Object();
 	loginObj.username = username;
 	loginObj.password  = password;
-	doRequestBody("POST", JSON.stringify(loginObj), "application/json", "../login/", processLoginResult, true);
+	doRequestBody("POST", JSON.stringify(loginObj), "application/json", "../login/", processLoginResult, true, false);
 	return false;
 }
 
 function processLoginResult(response){
-	if(response.status==401){
+	if(response.status!=200){
 		alert(response.responseText);
+		document.getElementById("password").value="";
 	}else{
 		var session = JSON.parse(response.responseText);
 		localStorage.setItem('TFW_Token',session.sessionIdentifier);
@@ -262,7 +342,7 @@ function listTestContent(result){
 // * Network *
 // ***********
 
-function doRequestBody(method, data, type, url, callback, params) {
+function doRequestBody(method, data, type, url, callback, params, sendAuth) {
 	var request = new XMLHttpRequest();
 	request.timeout = 5000;
 	request.ontimeout = function() {
@@ -288,6 +368,9 @@ function doRequestBody(method, data, type, url, callback, params) {
 		}
 	};
 	request.open(method, url);
+	if(sendAuth){
+		request.setRequestHeader('X-TFW-Session-ID', localStorage.getItem('TFW_Token'));
+	}
 	request.setRequestHeader("Content-Type", type);
 	request.send(data);
 }
@@ -322,7 +405,11 @@ function doRequest(method, url, callback, params) {
 					}
 					alert("Error: " + response.error);
 				} catch (e) {
-					alert("Unknown error");
+					if(request.status==404){
+						window.location.replace("index.html");
+					}else{
+						alert("Unknown error");						
+					}
 				}
 			}
 		}
@@ -422,6 +509,12 @@ function createTestMask(json){
 	}
 	
 	return maskSpan;
+}
+
+function displaySettings(){
+	if(localStorage.getItem('TFW_Role')!=="a"){
+		document.getElementById("settingsAdmin").remove();		
+	}
 }
 
 function createTaskDiv(task){

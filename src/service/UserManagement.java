@@ -55,6 +55,7 @@ public class UserManagement {
 	
 	public static synchronized void changePassword(String username, String password) throws Exception {
 		Log.log(Level.FINE, "Changing password for user '"+username+"'");
+		SessionManagement.destorySessionByUserName(username);
 		boolean changed = false;
 		for (User user : users) {
 			if(user.getUsername().equals(username)) {

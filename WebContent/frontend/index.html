@@ -19,7 +19,7 @@
 	<script>
 		'use strict';
 		var page = getQueryParams(document.location.search).page;
-		if(page === undefined || page == "undefined"){
+		if(page === undefined || page == "undefined" || page == "index" ){
 			page = "main";
 		}
 		page = page.replace(/[^A-Za-z0-9]/g,'');
@@ -41,6 +41,8 @@
 			if(page=="login"){
 			    document.getElementById("username").focus();
 			    removeLoader();
+				document.getElementById("settings").remove();
+				document.getElementById("logout").remove();
 			}
 			if(page=="info"){
 				doRequest("GET", "../getBasePath", basePath);
@@ -84,6 +86,10 @@
 			if(page=="reload"){
 				doRequest("GET", "../reload/", reload,[]);
 			}
+			if(page=="settings"){
+			    removeLoader();
+			    displaySettings();
+			}
 			if(page=="run"){
 				var done=false;
 				var handle;
@@ -100,10 +106,21 @@
 				}
 			}
 		}
+
 	</script>
 	<div id="menu" class="container">
-		<h2 style="float:left"><a href="index.html">TFW</a></h2> <a style="float:right" href="index.html?page=logout">Logout</a>
-		<br><br><hr>
+		<div class="row">
+			<div class="col-8">
+				<h2><a href="index.html">TFW</a></h2>
+			</div>
+			<div class="col-2"  align="right" style="padding-top:2px">
+				<a id="settings" href="index.html?page=settings">&#x2699;</a>
+			</div>
+			<div class="col-2"  align="right" style="padding-top:2px">
+				<a id="logout" href="index.html?page=logout">Logout</a>
+			</div>
+		</div>
+		<hr>
 	</div>
 	<div class="loader" id="loader"></div>
 
