@@ -96,6 +96,7 @@ Example of two defined users:
 	]
 
 The role "r" can only view results, "rw" can additionally run the defined tests.
+The role "a" stands for admin, it includes "rw" rights as well as the possibility to administer users.
 Passwords are hashed using SHA512 with an prepended salt "TFW_".
 You can use the form provided in the web interface to generate said password hashes.
 /TFW/frontend/index.html?page=hash
@@ -660,3 +661,37 @@ Returns all test groups.
 ### /TFW/reload
 Reloads the users.json file.
 Requires the 'rw' role.
+
+### /TFW/createUser
+Creates a new user.
+Requires the 'a' role.
+
+	  {
+        "username": "USERNAME",
+		"password": "PASSWORD",
+		"role": "ROLE"
+      }
+
+### /TFW/changePassword
+Changes the current users password.
+Requires the 'rw' or 'a' role.
+
+	  {
+		"password": "PASSWORD"
+      }
+	  
+### /TFW/changePasswordForUser
+Changes the password for the defined user.
+Requires the 'a' role.
+
+	  {
+		"password": "PASSWORD"
+      }
+	  
+### /TFW/deleteUser
+Deletes a specified user.
+Requires the 'a' role.
+
+	  {
+        "username": "USERNAME"
+      }

@@ -5,6 +5,7 @@ import helpers.Crypto;
 public class User {
 	private String username;
 	private String password;
+	private int pwLength;
 	private String role;
 
 	public String toString() {
@@ -16,6 +17,7 @@ public class User {
 	}
 	
 	public void setPassword(String password) {
+		this.pwLength=password.length();
 		this.password = Crypto.saltHashString(password);
 	}
 
@@ -38,4 +40,17 @@ public class User {
 	public void setUsername(String username) {
 		this.username = username;
 	}
+	
+	public String toJSON() {
+		return "{ "+System.lineSeparator()
+				+ "	\"username\" : \""+getUsername()+"\","+System.lineSeparator()
+				+ "	\"password\" : \""+getPassword()+"\","+System.lineSeparator()
+				+ "	\"role\" : \""+getRole()+"\""+System.lineSeparator()
+				+"}";
+	}
+
+	public int getPwLength() {
+		return pwLength;
+	}
+
 }

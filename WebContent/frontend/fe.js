@@ -90,7 +90,7 @@ function listTests(tests) {
 	var testCount = tests.length;
 	removeLoader();
 
-	if(localStorage.getItem('TFW_Role')==="rw"){
+	if(localStorage.getItem('TFW_Role')==="rw" || localStorage.getItem('TFW_Role')==="a"){
 		var table = new Tabulator("#testsTable", {
 		    layout:"fitDataFill",
 		    columns:[
@@ -106,14 +106,14 @@ function listTests(tests) {
 		    layout:"fitDataFill",
 		    columns:[
 		    {title:"Test", field:"test", minWidth:170, formatter:htmlFormatter},
-		    {title:"Status", field:"status"},
+		    {title:"Status", field:"status", formatter:htmlFormatter},
 		    {title:"Last Run", field:"lastRun"},
 		    {title:"Last Run Time", field:"lastRunTime"},
 		    ],
 		});		
 	}
 	
-	if(localStorage.getItem('TFW_Role')==="rw"){
+	if(localStorage.getItem('TFW_Role')==="rw" || localStorage.getItem('TFW_Role')==="a" ){
 		var innerHTML = "<table><tr><td><b>Test</b></td><td style=\"width: 50px;\"><b>Run</b></td><td><b>Status</b></td><td><b>Last run</b></td><td><b>Last Run Time</b></td></tr>";
 	}else{
 		var innerHTML = "<table><tr><td><b>Test</b></td><td><b>Status</b></td><td><b>Last run</b></td><td><b>Last Run Time</b></td></tr>";
@@ -127,7 +127,7 @@ function listTests(tests) {
 		var runState = tests[i].lastRunPassed ? sun : cloud;
 		runState = tests[i].lastRunDate.length==0 ? "-" : runState;
 		var lastRunTime = timeConversion(tests[i].totalRunTimeInMS);
-		if(localStorage.getItem('TFW_Role')==="rw"){
+		if(localStorage.getItem('TFW_Role')==="rw" || localStorage.getItem('TFW_Role')==="a"){
 			table.addRow([{test:testLink, run:runLink, status:runState, lastRun: tests[i].lastRunDate, lastRunTime:lastRunTime}], false);
 		}else{
 			table.addRow([{test:testLink, status:runState, lastRun: tests[i].lastRunDate, lastRunTime:lastRunTime}], false);			
@@ -139,7 +139,7 @@ function listGroups(groups){
 	var groupCount = groups.length;
 	removeLoader();
 	
-	if(localStorage.getItem('TFW_Role')==="rw"){
+	if(localStorage.getItem('TFW_Role')==="rw" || localStorage.getItem('TFW_Role')==="a"){
 		var table = new Tabulator("#testGroupsTable", {
 		    layout:"fitDataFill",
 		    columns:[
@@ -178,7 +178,7 @@ function listGroups(groups){
 		var runState = groups[i].lastRunPassed ? sun : cloud;
 		runState = groups[i].lastRunDate.length==0 ? "-" : runState;
 		var lastRunTime = timeConversion(groups[i].totalRunTimeInMS);
-		if(localStorage.getItem('TFW_Role')==="rw"){
+		if(localStorage.getItem('TFW_Role')==="rw" || localStorage.getItem('TFW_Role')==="a"){
 			table.addRow([{group:groupLink, tests:tests, run:runLink, status:runState, lastRun: groups[i].lastRunDate, lastRunTime:lastRunTime}], false);
 		}else{
 			table.addRow([{group:groupLink, tests:tests, status:runState, lastRun: groups[i].lastRunDate, lastRunTime:lastRunTime}], false);			

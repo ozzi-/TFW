@@ -53,7 +53,7 @@ public class TFWService {
 	@GET
 	@Path("/reload")
 	public Response reload(@Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,true);
+		String userName = checkLogin(headers,true,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -70,7 +70,7 @@ public class TFWService {
 	@GET
 	@Path("/testLogin")
 	public Response test(@Context HttpHeaders headers) {
-		if (checkLogin(headers,false) != null) {
+		if (checkLogin(headers,false,false) != null) {
 			return Response.status(200).entity("OK").build();
 		} else {
 			return Response.status(203).entity("NOK").build();
@@ -81,7 +81,7 @@ public class TFWService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("/logout")
 	public Response doLogout(@Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -100,7 +100,7 @@ public class TFWService {
 	@GET
 	@Path("/getBasePath") 
 	public Response getBasePath(@Context HttpHeaders headers) throws Exception {
-		if (checkLogin(headers,false) == null) {
+		if (checkLogin(headers,false,false) == null) {
 			return unauthorizedResponse();
 		}
 		return Response.status(200).entity(PathFinder.getBasePath()).build();
@@ -112,10 +112,10 @@ public class TFWService {
 		return Response.status(403).entity(error.toString()).type("application/json").build();
 	}
 
-	@GET
+	@POST
 	@Path("/run/{testname}")
 	public Response runTestByName(@PathParam("testname") String testName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,true);
+		String userName = checkLogin(headers,true,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -134,10 +134,10 @@ public class TFWService {
 		return Response.status(200).entity(resp.toString()).type("application/json").build();
 	}
 
-	@GET
+	@POST
 	@Path("/runGroup/{groupname}")
 	public Response runTestGroupByName(@PathParam("groupname") String groupName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,true);
+		String userName = checkLogin(headers,true,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -165,7 +165,7 @@ public class TFWService {
 	@GET
 	@Path("/getResults/{testname}")
 	public Response getResultsByName(@PathParam("testname") String testName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -182,7 +182,7 @@ public class TFWService {
 	@GET
 	@Path("/getGroupResults/{groupname}")
 	public Response getGroupResultsByName(@PathParam("groupname") String groupName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -201,7 +201,7 @@ public class TFWService {
 	@GET
 	@Path("/getLatestResult/{testname}")
 	public Response getLatestResultByName(@PathParam("testname") String testName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -215,7 +215,7 @@ public class TFWService {
 	@GET
 	@Path("/getLatestGroupResult/{groupname}")
 	public Response getLatestGroupResultByName(@PathParam("groupname") String groupName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -230,7 +230,7 @@ public class TFWService {
 	@GET
 	@Path("/getTest/{testname}")
 	public Response getTest(@PathParam("testname") String testName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -241,7 +241,7 @@ public class TFWService {
 	@GET
 	@Path("/getGroup/{groupname}")
 	public Response getGroup(@PathParam("groupname") String groupName, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -297,7 +297,7 @@ public class TFWService {
 	@Path("/getResult/{testname}/{handle}")
 	public Response getLatestResultByName(@PathParam("testname") String testName, @PathParam("handle") String handle, @Context HttpHeaders headers)
 			throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -309,7 +309,7 @@ public class TFWService {
 	@Path("/getGroupResult/{groupname}/{handle}")
 	public Response getLatestGroupResultByName(@PathParam("groupname") String groupname,
 			@PathParam("handle") String handle, @Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -321,7 +321,7 @@ public class TFWService {
 	@Path("/getStatus/{testname}/{handle}")
 	public Response getStatusByName(@PathParam("testname") String testName, @PathParam("handle") String handle, @Context HttpHeaders headers)
 			throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -335,7 +335,7 @@ public class TFWService {
 	@Path("/getGroupStatus/{groupname}/{handle}")
 	public Response getGroupStatusByName(@PathParam("groupname") String groupName, @PathParam("handle") String handle, @Context HttpHeaders headers)
 			throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -348,7 +348,7 @@ public class TFWService {
 	@GET
 	@Path("/getTestList")
 	public Response getTestList(@Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -369,7 +369,7 @@ public class TFWService {
 	@GET
 	@Path("/getTestGroupList")
 	public Response getGroupList(@Context HttpHeaders headers) throws Exception {
-		String userName = checkLogin(headers,false);
+		String userName = checkLogin(headers,false,false);
 		if ( userName == null) {
 			return unauthorizedResponse();
 		}
@@ -383,7 +383,129 @@ public class TFWService {
 		}
 		return Response.status(200).entity(groupsArray.toString()).type("application/json").build();
 	}
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/createUser")
+	public Response createUser(@Context HttpHeaders headers, String body) throws Exception {
+		String userName = checkLogin(headers,true,true);
+		if ( userName == null) {
+			return unauthorizedResponse();
+		}
+		User userToAdd = UserManagement.parseUserJSON(body);
+		
+		if(userToAdd.getPwLength()<8) {
+			throw new Exception("Password length is 8 characters minimum");
+		}
+		for (User user : UserManagement.users) {
+			if(user.getUsername().equals(userToAdd.getUsername())) {
+				throw new Exception("Username already taken");
+			}
+		}
+		if( !userToAdd.getRole().equals("a") && !userToAdd.getRole().equals("rw") && !userToAdd.getRole().equals("r")) {
+			throw new Exception("Invalid role");
+		}
+		Log.log(Level.INFO, "'"+userName+"' is adding user '"+userToAdd.getUsername()+"'");
+		UserManagement.addUser(userToAdd);
+		try {
+			UserManagement.loadUsers();
+		} catch (Exception e) {
+			throw new Exception("Cannot load users - "+e.getMessage());
+		}
+		return Response.status(200).entity("{\"user\" : \"created\"}").type("application/json").build();
+	}
 
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/changePassword")
+	public Response changePassword(@Context HttpHeaders headers, String body) throws Exception {
+		String userName = checkLogin(headers,true,false);
+		if ( userName == null) {
+			return unauthorizedResponse();
+		}
+		
+		String password = "";
+		JsonObject userJO;
+		try {
+			userJO =  new JsonParser().parse(body).getAsJsonObject();			
+		}catch (Exception e) {
+			throw new Exception("Error parsing password json - "+e.getMessage());
+		}
+		try {
+			password = userJO.getAsJsonObject().get("password").getAsString();
+		}catch (Exception e) {
+			throw new Exception("Error parsing password - key not found");
+		}
+		
+		if(password.length()<8) {
+			throw new Exception("Password length is 8 characters minimum");
+		}
+		Log.log(Level.INFO, "'"+userName+"' is changing his password");
+
+		UserManagement.changePassword(userName, password);
+		return Response.status(200).entity("{\"password\" : \"changed\"}").type("application/json").build();
+	}
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/changePasswordForUser")
+	public Response changePasswordForUser(@Context HttpHeaders headers, String body) throws Exception {
+		String userName = checkLogin(headers,true,true);
+		if ( userName == null) {
+			return unauthorizedResponse();
+		}
+		
+		String userNameToChange = ""; 
+		String password = "";
+		JsonObject userJO;
+		try {
+			userJO =  new JsonParser().parse(body).getAsJsonObject();			
+		}catch (Exception e) {
+			throw new Exception("Error parsing password json - "+e.getMessage());
+		}
+		try {
+			userNameToChange = userJO.getAsJsonObject().get("username").getAsString();
+			password = userJO.getAsJsonObject().get("password").getAsString();
+		}catch (Exception e) {
+			throw new Exception("Error parsing username / password - key not found");
+		}
+		
+		if(password.length()<8) {
+			throw new Exception("Password length is 8 characters minimum");
+		}
+		Log.log(Level.INFO, "'"+userName+"' is changing the password of user '"+userNameToChange+"'");
+		UserManagement.changePassword(userNameToChange, password);
+		return Response.status(200).entity("{\"password\" : \"changed\"}").type("application/json").build();
+	}
+	
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/deleteUser")
+	public Response deleteUser(@Context HttpHeaders headers, String body) throws Exception {
+		String userName = checkLogin(headers,true,true);
+		if ( userName == null) {
+			return unauthorizedResponse();
+		}
+		
+		String userNameToDelete = ""; 
+		JsonObject userJO;
+		try {
+			userJO =  new JsonParser().parse(body).getAsJsonObject();			
+		}catch (Exception e) {
+			throw new Exception("Error parsing user json - "+e.getMessage());
+		}
+		try {
+			userNameToDelete = userJO.getAsJsonObject().get("username").getAsString();
+		}catch (Exception e) {
+			throw new Exception("Error parsing username - key not found");
+		}
+
+		Log.log(Level.INFO, "'"+userName+"' is deleting  user '"+userNameToDelete+"'");
+		UserManagement.deleteUser(userNameToDelete);
+		return Response.status(200).entity("{\"user\" : \"deleted\"}").type("application/json").build();
+	}
+	
 	private Response getResultInternal(String path) throws Exception {
 		String result = "";
 		try {
@@ -568,13 +690,15 @@ public class TFWService {
 	}
 
 
-	private String checkLogin(HttpHeaders headers, boolean requiresWritePrivilege) {
+	private String checkLogin(HttpHeaders headers, boolean requiresWritePrivilege, boolean requiresAdminPrivilege) {
 		if (headers != null && headers.getRequestHeader(headerNameSessionID) != null && headers.getRequestHeader(headerNameSessionID).size() > 0) { 
 			String sessionIdentifier = headers.getRequestHeader(headerNameSessionID).get(0);
 			Session session = SessionManagement.getSessionFormIdentifier(sessionIdentifier);
 			if (session != null) {
-				if(requiresWritePrivilege &&  !session.getRole().equals("rw")) {
-					Log.log(Level.WARNING, "Login check failed - user "+session.getUsername()+" attempted to execute API call which he does not have sufficient privileges for.");
+				if(requiresWritePrivilege && !session.getRole().equals("rw") && !session.getRole().equals("a")) {
+					Log.log(Level.WARNING, "Login check failed - user "+session.getUsername()+" attempted to execute write API call which he does not have sufficient privileges for.");
+				}else if(requiresAdminPrivilege && !session.getRole().equals("a")) {
+					Log.log(Level.WARNING, "Login check failed - user "+session.getUsername()+" attempted to execute admin API call which he does not have sufficient privileges for.");
 				}else {
 					return session.getUsername();					
 				}
