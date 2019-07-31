@@ -442,6 +442,7 @@ public class TFWService {
 		ArrayList<String> listResults = Helpers.getListOfFiles(PathFinder.getGroupTestResultsPath(groupName), PathFinder.getDataLabel());
 		String lastRunDate = "";
 		boolean passed = true;
+		long totalRunTimeInMS = 0;
 		
 		if(listResults.size()>0) {
 			long newest = getNewest(listResults);
@@ -453,6 +454,7 @@ public class TFWService {
 			JsonArray lastRunResults = lastRunJO.get("results").getAsJsonArray();
 			passed = true;
 			for (JsonElement lastRunResult : lastRunResults) {
+				totalRunTimeInMS += lastRunResult.getAsJsonObject().get("runTimeInMS").getAsLong();
 				if(lastRunResult.getAsJsonObject().get("passed").getAsString().equals("false")) {
 					passed = false;
 				}
@@ -460,7 +462,7 @@ public class TFWService {
 		}
 		testGroup.addProperty("lastRunDate", lastRunDate);
 		testGroup.addProperty("lastRunPassed", passed);
-		
+		testGroup.addProperty("totalRunTimeInMS", totalRunTimeInMS);
 		JsonArray tests = (JsonArray) test.get("tests");
 		for (Object testObj : tests) {
 			JsonObject testO = (JsonObject) testObj;
@@ -474,6 +476,8 @@ public class TFWService {
 	private void enrichLastRunData(JsonObject test, String testName, ArrayList<String> listResults) throws Exception {
 		boolean passed = true;
 		String lastRunDate = "";
+		long totalRunTimeInMS = 0;
+
 		if(listResults.size()>0) {
 			long newest = getNewest(listResults);
 			String handle = String.valueOf(newest);
@@ -484,11 +488,13 @@ public class TFWService {
 			JsonArray lastRunResults = lastRunJO.get("results").getAsJsonArray();
 			passed = true;
 			for (JsonElement lastRunResult : lastRunResults) {
+				totalRunTimeInMS += lastRunResult.getAsJsonObject().get("runTimeInMS").getAsLong();
 				if(lastRunResult.getAsJsonObject().get("passed").getAsString().equals("false")) {
 					passed = false;
 				}
 			}
 		}
+		test.addProperty("totalRunTimeInMS", totalRunTimeInMS);
 		test.addProperty("lastRunDate", lastRunDate);
 		test.addProperty("lastRunPassed", passed);
 	}
@@ -515,7 +521,12 @@ public class TFWService {
 		JsonParser parser = new JsonParser();
 		ArrayList<JsonElement> elements = new ArrayList<JsonElement>();
 		for (String path : paths) {
-			String testContent = Helpers.readFile(path);
+			String testContent;
+			try {
+				testContent = Helpers.readFile(path);
+			} catch (Exception e) {
+				throw new Exception("Cannot load group due to an error reading one of its test: "+e.getMessage());
+			}
 			JsonElement testContentJSON = parser.parse(testContent);
 			elements.add(testContentJSON);
 		}

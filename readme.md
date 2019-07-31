@@ -8,10 +8,10 @@ Do you require testing evidence?
 TFW enables you to do all of this by giving you a unified way of running tests & storing results!
 
 ## Main Page
-![TFW](https://i.imgur.com/mZCtpp4.png)
+![TFW](https://i.imgur.com/HJAXeMl.png)
 
 ## Results Page
-![TFW](https://i.imgur.com/wdiePMV.png)
+![TFW](https://i.imgur.com/am3m9lU.png)
 
 ## Tests
 Tests are a collection of one or more tasks.
@@ -613,12 +613,14 @@ Returns all tests.
 	  {
         "name": "windows",
         "lastRunDate": "2019-07-11 14:50:45",
-        "lastRunPassed": true
+        "lastRunPassed": true,
+		"totalRunTimeInMS": 154
       },
       {
         "name": "windows2",
         "lastRunDate": "2019-07-08 14:06:29",
-        "lastRunPassed": false
+        "lastRunPassed": false,
+		"totalRunTimeInMS": 350
       }
 	]
 
@@ -629,6 +631,7 @@ Returns all test groups.
 	   {
 		  "name":"windowsgroup",
 		  "lastRunDate":"2019-07-12 14:41:34",
+		  "totalRunTimeInMS": 350,
 		  "lastRunPassed":true,
 		  "tests":[
 			 {
@@ -643,6 +646,7 @@ Returns all test groups.
 		  "name":"auth",
 		  "lastRunDate":"2019-07-12 15:43:20",
 		  "lastRunPassed":false,
+		  "totalRunTimeInMS": 1842,
 		  "tests":[
 			 {
 				"name":"smtp"

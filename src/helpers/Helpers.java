@@ -66,7 +66,7 @@ public class Helpers {
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(Paths.get(path));
-		} catch (IOException e) {
+		} catch (Exception e) {
 			throw new Exception("Could not read file: "+path);
 		}
 		return new String(encoded, "UTF-8");

@@ -1,5 +1,10 @@
+'use strict';
 var sun = "&#9728";
 var cloud = "&#127785;";
+var htmlFormatter = function(cell, formatterParams){
+    var data = cell.getData();
+    return cell.getValue();
+}
 
 // *************
 // * Login/out *
@@ -25,7 +30,7 @@ function processLoginResult(response){
 	}
 }
 
-doLogout = function() {
+function doLogout() {
 	var request = new XMLHttpRequest();
 	request.onreadystatechange = function() {
 		if (request.readyState == 4) {
@@ -53,15 +58,16 @@ function runTestGroup(res,name,paramName) {
 
 function runInternal(res, name, paramName, call){
 	var pollTime = 1200;
-	
-	handle = res.handle;
-	doRequest("GET", "../"+call+"/" + name + "/" + handle, poll, [name,paramName], true);
-	poller = setInterval(function() {
-		doRequest("GET", "../"+call+"/" + name + "/" + handle, poll, [name,paramName], true);
-	}, pollTime);
+	var handle = res.handle;
+	function doPoll() {
+		doRequest("GET", "../"+call+"/" + name + "/" + handle, poll, [name,paramName, poller, handle], true);
+	}
+	doPoll();
+	var poller;
+	poller = setInterval(doPoll, pollTime);
 }
 
-function poll(res,name,paramName) {
+function poll(res,name,paramName, poller, handle) {
 	document.getElementById("state").innerHTML=res.state;
 	if(res.state=="done"){
 		removeLoader();
@@ -69,7 +75,9 @@ function poll(res,name,paramName) {
 		a.innerHTML = "Result";
 		a.setAttribute('href', "index.html?page=result&"+paramName+"="+ name + "&handle="+ handle);
 		document.getElementById("resultLink").appendChild(a);
-		clearInterval(poller);
+		if(poller === undefined || poller == "undefined" || poller != null){
+			clearInterval(poller);			
+		}
 	}
 }
 
@@ -79,35 +87,84 @@ function poll(res,name,paramName) {
 // ********
 
 function listTests(tests) {
-	removeLoader();
-	var testsSpan = document.getElementById("tests");
 	var testCount = tests.length;
+	removeLoader();
+
 	if(localStorage.getItem('TFW_Role')==="rw"){
-		var innerHTML = "<table><tr><td><b>Test</b></td><td style=\"width: 50px;\"><b>Run</b></td><td><b>Last run</b></td></tr>";
+		var table = new Tabulator("#testsTable", {
+		    layout:"fitDataFill",
+		    columns:[
+		    {title:"Test", field:"test", minWidth:170, formatter:htmlFormatter},
+		    {title:"Run", field:"run", formatter:htmlFormatter},
+		    {title:"Status", field:"status", formatter:htmlFormatter},
+		    {title:"Last Run", field:"lastRun"},
+		    {title:"Last Run Time", field:"lastRunTime"},
+		    ],
+		});
 	}else{
-		var innerHTML = "<table><tr><td><b>Test</b></td><td></td><td>Last run</td></tr>";
+		var table = new Tabulator("#testsTable", {
+		    layout:"fitDataFill",
+		    columns:[
+		    {title:"Test", field:"test", minWidth:170, formatter:htmlFormatter},
+		    {title:"Status", field:"status"},
+		    {title:"Last Run", field:"lastRun"},
+		    {title:"Last Run Time", field:"lastRunTime"},
+		    ],
+		});		
+	}
+	
+	if(localStorage.getItem('TFW_Role')==="rw"){
+		var innerHTML = "<table><tr><td><b>Test</b></td><td style=\"width: 50px;\"><b>Run</b></td><td><b>Status</b></td><td><b>Last run</b></td><td><b>Last Run Time</b></td></tr>";
+	}else{
+		var innerHTML = "<table><tr><td><b>Test</b></td><td><b>Status</b></td><td><b>Last run</b></td><td><b>Last Run Time</b></td></tr>";
+	}
+	if(testCount==0){
+		table.addRow([{test:"No tests defined yet", run:"", status:"", lastRun: "", lastRunTime:""}], false);
 	}
 	for (var i = 0; i < testCount; i++) {
-		var runState = tests[i].lastRunPassed ? sun: cloud ;
-		innerHTML += "<tr><td style=\"padding-right:20px;\"><a href=\"index.html?page=results&name="+ tests[i].name + "\">" + tests[i].name;
+		var testLink = "<a href=\"index.html?page=results&name="+tests[i].name+"\">"+tests[i].name+"</a>";
+		var runLink = "<a style=\"text-decoration:none;\" href=\"index.html?page=run&name="+tests[i].name+"\"> &#9654; </a>";
+		var runState = tests[i].lastRunPassed ? sun : cloud;
+		runState = tests[i].lastRunDate.length==0 ? "-" : runState;
+		var lastRunTime = timeConversion(tests[i].totalRunTimeInMS);
 		if(localStorage.getItem('TFW_Role')==="rw"){
-			innerHTML += "</a></td><td><a style=\"text-decoration:none; width: 50px;\" href=\"index.html?page=run&name="+tests[i].name+"\">&#9658;</a></td><td>"+tests[i].lastRunDate+runState+"</td></tr>";
+			table.addRow([{test:testLink, run:runLink, status:runState, lastRun: tests[i].lastRunDate, lastRunTime:lastRunTime}], false);
 		}else{
-			innerHTML += "</a></td><td>"+tests[i].lastRunDate+runState+"</td></tr>";
+			table.addRow([{test:testLink, status:runState, lastRun: tests[i].lastRunDate, lastRunTime:lastRunTime}], false);			
 		}
 	}
-	innerHTML+="</table>";
-	testsSpan.innerHTML = innerHTML;
 }
 
 function listGroups(groups){
-	var groupsSpan = document.getElementById("testGroups");
 	var groupCount = groups.length;
 	removeLoader();
+	
 	if(localStorage.getItem('TFW_Role')==="rw"){
-		var innerHTML = "<table><tr><td><b>Test</b></td><td><b>Tests</b></td><td style=\"width: 50px;\"><b>Run</b></td><td><b>Last run</b></td></tr>";
+		var table = new Tabulator("#testGroupsTable", {
+		    layout:"fitDataFill",
+		    columns:[
+		    {title:"Group", field:"group", minWidth:170, formatter:htmlFormatter},
+		    {title:"Tests", field:"tests"},
+		    {title:"Run", field:"run", formatter:htmlFormatter},
+		    {title:"Status", field:"status", formatter:htmlFormatter},
+		    {title:"Last Run", field:"lastRun"},
+		    {title:"Last Run Time", field:"lastRunTime"},
+		    ],
+		});
 	}else{
-		var innerHTML = "<table><tr><td><b>Test</b></td><td>Tests</td><td></td><td>Last run</td></tr>";
+		var table = new Tabulator("#testGroupsTable", {
+		    layout:"fitDataFill",
+		    columns:[
+			    {title:"Group", field:"group", minWidth:170, formatter:htmlFormatter},
+			    {title:"Tests", field:"tests"},
+			    {title:"Status", field:"status", formatter:htmlFormatter},
+			    {title:"Last Run", field:"lastRun"},
+			    {title:"Last Run Time", field:"lastRunTime"},
+		    ],
+		});		
+	}
+	if(groupCount==0){
+		table.addRow([{group:"No Groups defined yet", tests:"", run:"", status:"", lastRun: "", lastRunTime:""}], false);
 	}
 	for (var i = 0; i < groupCount; i++) {
 		var tests ="";
@@ -115,17 +172,18 @@ function listGroups(groups){
 			tests+=groups[i].tests[j].name+",";
 		}
 		tests = tests.slice(0, -1);
-		innerHTML += "<tr><td style=\"padding-right:20px;\"><a href=\"index.html?page=results&groupname="+
-		groups[i].name+"\">"+groups[i].name+"</a></td><td style=\"padding-right:20px;\">"+tests;
+		
+		var groupLink = "<a href=\"index.html?page=results&groupname="+groups[i].name+"\">"+groups[i].name+"</a>";
+		var runLink = "<a style=\"text-decoration:none;\" href=\"index.html?page=run&groupname="+groups[i].name+"\"> &#9654; </a>";
 		var runState = groups[i].lastRunPassed ? sun : cloud;
+		runState = groups[i].lastRunDate.length==0 ? "-" : runState;
+		var lastRunTime = timeConversion(groups[i].totalRunTimeInMS);
 		if(localStorage.getItem('TFW_Role')==="rw"){
-			innerHTML += "</td><td><a style=\"text-decoration:none;\" href=\"index.html?page=run&groupname="+groups[i].name+"\">&#9658;</a></td><td>"+groups[i].lastRunDate+runState+"</td></tr>";			
+			table.addRow([{group:groupLink, tests:tests, run:runLink, status:runState, lastRun: groups[i].lastRunDate, lastRunTime:lastRunTime}], false);
 		}else{
-			innerHTML += "</td><td></td><td>"+groups[i].lastRunDate+runState+"</td></tr>";			
+			table.addRow([{group:groupLink, tests:tests, status:runState, lastRun: groups[i].lastRunDate, lastRunTime:lastRunTime}], false);			
 		}
 	}
-	innerHTML += "</table>";
-	groupsSpan.innerHTML = innerHTML;
 }
 function listResults(results,paramName) {
 	removeLoader();
@@ -134,7 +192,7 @@ function listResults(results,paramName) {
 	if(name === undefined || name == "undefined"){
 		name = getQueryParams(document.location.search).groupname;
 	}
-	testName.innerHTML = name;
+	testName.innerHTML = escapeHtml(name);
 	
 	results = results.sort((a, b) => (a.handle < b.handle) ? 1 : -1);
 	
@@ -143,6 +201,16 @@ function listResults(results,paramName) {
 	if(resultCount==0){
 		resultsSpan.innerHTML = "<i>This test has not been run yet.</i>";
 	}else{
+		
+		var table = new Tabulator("#resultsSpan", {
+		    layout:"fitDataFill",
+		    columns:[
+		    {title:"Status", field:"status", formatter:htmlFormatter},
+		    {title:"Last Run", field:"lastRun", formatter:htmlFormatter},
+		    ],
+		});
+		
+		
 		for (var i = 0; i < resultCount; i++) {
 			var a = document.createElement("a");
 			var passed = true;
@@ -152,14 +220,9 @@ function listResults(results,paramName) {
 					break;
 				}
 			}
-			a.innerHTML  = (passed==true ? " "+sun: " "+cloud) 
-				+ " " + results[i].result.testStartString;
-			
-			a.setAttribute('href', "index.html?page=result&"+paramName+"="
-					+ results[i].result.testName + "&handle="
-					+ results[i].handle);
-			resultsSpan.appendChild(a);
-			resultsSpan.appendChild(document.createElement("br"));
+			var status = (passed==true ? " "+sun: " "+cloud);
+			var lastRun = "<a href=\"index.html?page=result&"+paramName+"="+results[i].result.testName+"&handle="+ results[i].handle+"\">"+results[i].result.testStartString+"</a>";
+			table.addRow([{status:status, lastRun: lastRun}], false);
 		}
 	}
 }
@@ -176,7 +239,7 @@ function listResult(result) {
 	var infoSpan = document.getElementById("info");
 	infoSpan.innerHTML = ("<h3"+style+">" + result.testName + " - "
 			+ result.testStartString + "</h3>");
-	infoSpan.innerHTML += "<b>Description</b>: "+ escapeHtml(result.description) + "<br><hr>";
+	infoSpan.innerHTML += "<b>Run by</b>: "+result.testRunBy+"&nbsp;&nbsp; <b>Description</b>: "+ escapeHtml(result.description) + "<br><hr>";
 
 	var resultsSpan = document.getElementById("results");
 	for (var i = 0; i < result.results.length; i++) {
@@ -199,7 +262,7 @@ function listTestContent(result){
 // * Network *
 // ***********
 
-doRequestBody = function(method, data, type, url, callback, params) {
+function doRequestBody(method, data, type, url, callback, params) {
 	var request = new XMLHttpRequest();
 	request.timeout = 5000;
 	request.ontimeout = function() {
@@ -231,7 +294,7 @@ doRequestBody = function(method, data, type, url, callback, params) {
 
 
 
-doRequest = function(method, url, callback, params) {
+function doRequest(method, url, callback, params) {
 	var request = new XMLHttpRequest();
 
 	request.timeout = 5000;
@@ -352,7 +415,7 @@ function createTestMask(json){
 	maskSpan.append(document.createElement("br"));
 
 
-	for (i = 0; i < json.test.tasks.length ; i++) {
+	for (var i = 0; i < json.test.tasks.length ; i++) {
 		var task = json.test.tasks[i];
 		var taskDiv = createTaskDiv(task);
 		maskSpan.append(taskDiv);
@@ -396,4 +459,23 @@ function createInput(title, value, disabled){
 	resultSpan.append(valueInput);
 	
 	return resultSpan;
+}
+
+function timeConversion(millisec) {
+    var seconds = (millisec / 1000).toFixed(1);
+    var minutes = (millisec / (1000 * 60)).toFixed(1);
+    var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
+    var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
+    
+    if (millisec < 1000) {
+    	return millisec +" ms"
+    } else if (seconds < 60) {
+        return seconds + " sec";
+    } else if (minutes < 60) {
+        return minutes + " min";
+    } else if (hours < 24) {
+        return hours + " hrs";
+    } else {
+        return days + " days"
+    }
 }
