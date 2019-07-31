@@ -679,6 +679,8 @@ Requires the 'a' role.
 Changes the current users password.
 Requires the 'rw' or 'a' role.
 
+Expects a JSON object as following:
+
 	  {
 		"password": "PASSWORD"
       }
@@ -687,6 +689,8 @@ Requires the 'rw' or 'a' role.
 Changes the password for the defined user.
 Requires the 'a' role.
 
+Expects a JSON object as following:
+
 	  {
 		"password": "PASSWORD"
       }
@@ -694,6 +698,8 @@ Requires the 'a' role.
 ### /TFW/deleteUser
 Deletes a specified user.
 Requires the 'a' role.
+
+Expects a JSON object as following:
 
 	  {
         "username": "USERNAME"
