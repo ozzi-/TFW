@@ -175,9 +175,9 @@ function listTests(tests) {
 		    layout:"fitDataFill",
 		    columns:[
 		    {title:"Test", field:"test", minWidth:170, formatter:htmlFormatter},
-		    {title:"Run", field:"run", formatter:htmlFormatter},
-		    {title:"Status", field:"status", formatter:htmlFormatter},
-		    {title:"Last Run", field:"lastRun"},
+		    {title:"Run", field:"run",  minWidth:70, formatter:htmlFormatter},
+		    {title:"Status", field:"status", minWidth:70, formatter:htmlFormatter},
+		    {title:"Last Run", field:"lastRun" , minWidth:150},
 		    {title:"Last Run Time", field:"lastRunTime"},
 		    ],
 		});
@@ -186,18 +186,13 @@ function listTests(tests) {
 		    layout:"fitDataFill",
 		    columns:[
 		    {title:"Test", field:"test", minWidth:170, formatter:htmlFormatter},
-		    {title:"Status", field:"status", formatter:htmlFormatter},
-		    {title:"Last Run", field:"lastRun"},
+		    {title:"Status", field:"status", minWidth:70, formatter:htmlFormatter},
+		    {title:"Last Run", field:"lastRun" , minWidth:150},
 		    {title:"Last Run Time", field:"lastRunTime"},
 		    ],
 		});		
 	}
 	
-	if(localStorage.getItem('TFW_Role')==="rw" || localStorage.getItem('TFW_Role')==="a" ){
-		var innerHTML = "<table><tr><td><b>Test</b></td><td style=\"width: 50px;\"><b>Run</b></td><td><b>Status</b></td><td><b>Last run</b></td><td><b>Last Run Time</b></td></tr>";
-	}else{
-		var innerHTML = "<table><tr><td><b>Test</b></td><td><b>Status</b></td><td><b>Last run</b></td><td><b>Last Run Time</b></td></tr>";
-	}
 	if(testCount==0){
 		table.addRow([{test:"No tests defined yet", run:"", status:"", lastRun: "", lastRunTime:""}], false);
 	}
@@ -225,9 +220,9 @@ function listGroups(groups){
 		    columns:[
 		    {title:"Group", field:"group", minWidth:170, formatter:htmlFormatter},
 		    {title:"Tests", field:"tests"},
-		    {title:"Run", field:"run", formatter:htmlFormatter},
+		    {title:"Run", field:"run", minWidth:70, formatter:htmlFormatter},
 		    {title:"Status", field:"status", formatter:htmlFormatter},
-		    {title:"Last Run", field:"lastRun"},
+		    {title:"Last Run", field:"lastRun", minWidth:150},
 		    {title:"Last Run Time", field:"lastRunTime"},
 		    ],
 		});
@@ -238,7 +233,7 @@ function listGroups(groups){
 			    {title:"Group", field:"group", minWidth:170, formatter:htmlFormatter},
 			    {title:"Tests", field:"tests"},
 			    {title:"Status", field:"status", formatter:htmlFormatter},
-			    {title:"Last Run", field:"lastRun"},
+			    {title:"Last Run", field:"lastRun" , minWidth:150},
 			    {title:"Last Run Time", field:"lastRunTime"},
 		    ],
 		});		
@@ -402,6 +397,7 @@ function doRequest(method, url, callback, params) {
 					response = JSON.parse(request.responseText);
 					if(request.status==403){
 						window.location.replace("index.html?page=login");
+						return;
 					}
 					alert("Error: " + response.error);
 				} catch (e) {
