@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>TFW</title>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" type="text/css" href="res/style.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/print-js@1.0.61/dist/print.css" integrity="sha384-jSpO3HGPFKNZLKogHGoNBpz00009d/veQ2wGctsJmlHDIwPIvfJtIPHCNla28TCy" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.3.0/css/bootstrap/tabulator_bootstrap.min.css" integrity="sha384-fJLCjlnjtE8AZvRxCEsPx0V26Y+n2YwmvInN8MR2RR0wUnD+uDwr/fmtnuFjewfG" crossorigin="anonymous">
+</head>
+<body>
+	<script src="https://cdn.jsdelivr.net/npm/print-js@1.0.61/dist/print.min.js" integrity="sha384-xAvZIzg0jh55H0s958UB8+vD+IlXr9nYsm/YoxuQ41jFgBQZ72Wuh80wuqNeaLPE" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.3.0/js/tabulator.min.js" integrity="sha384-6ca/qh3YTj+VBNXExNya66wwY5Bh3V5DsYAERGpu/V1AJMCWKm7j6H4sebqVqky3" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="fe.js"></script>
+	<script>
+		'use strict';
+		var page = getQueryParams(document.location.search).page;
+		if(page === undefined || page == "undefined" || page == "index" ){
+			page = "main";
+		}
+		page = page.replace(/[^A-Za-z0-9]/g,'');
+		doRequest("GET", page+".html", pageLogic, []);
+		
+		setTimeout(function() {
+			var loader = document.getElementById("loader");
+			if(loader!=undefined){
+				loader.style.visibility="visible";		
+			}
+		}, 300); 
+		
+		function pageLogic (response){
+			document.getElementById("container").innerHTML = response;
+			if(page=="main"){
+				doRequest("GET", "../getTestList", listTests);
+				doRequest("GET", "../getTestGroupList", listGroups);
+			}
+			if(page=="login"){
+			    document.getElementById("username").focus();
+			    removeLoader();
+				document.getElementById("settings").remove();
+				document.getElementById("logout").remove();
+			}
+			if(page=="info"){
+				doRequest("GET", "../getBasePath", basePath);
+			}
+			if(page=="logout"){
+				doLogout();
+			}
+			if(page=="hash"){
+				doRequest("GET", "../getBasePath", basePath);
+				var hashInputField = document.getElementById("in");
+				var hashOutputField = document.getElementById("out");
+				hashInputField.oninput = function(){
+					var toHash = "TFW_"+hashInputField.value;
+					sha512(toHash).then(x => hashOutputField.value=x.toUpperCase());
+				}
+			}
+			if(page=="result"){
+				var handle = getQueryParams(document.location.search).handle;
+				var name = getQueryParams(document.location.search).name;
+				if(name === undefined || name == "undefined"){
+					name = getQueryParams(document.location.search).groupname;
+					doRequest("GET", "../getGroupResult/" + name + "/" + handle, listResult);
+				}else{
+					doRequest("GET", "../getResult/" + name + "/" + handle, listResult);
+				}
+			}
+			if(page=="results"){
+				var paramName;
+				var name = getQueryParams(document.location.search).name;
+				if(name=="undefined" || name === undefined ){
+					name = getQueryParams(document.location.search).groupname;
+					paramName="groupname";
+					doRequest("GET", "../getGroupResults/" + name, listResults,[paramName]);
+					doRequest("GET", "../getGroup/" + name , listTestContent)
+				}else{
+					paramName="name";
+					doRequest("GET", "../getResults/" + name, listResults,[paramName]);
+					doRequest("GET", "../getTest/" + name , listTestContent)
+				}
+			}
+			if(page=="reload"){
+				doRequest("GET", "../reload/", reload,[]);
+			}
+			if(page=="settings"){
+			    removeLoader();
+			    displaySettings();
+			}
+			if(page=="run"){
+				var done=false;
+				var handle;
+				var poller;
+				var paramName;
+				var name = getQueryParams(document.location.search).name;
+				if(name=="undefined" || name === undefined){
+					name = getQueryParams(document.location.search).groupname;
+					paramName = "groupname";
+					doRequest("POST", "../runGroup/" + name, runTestGroup, [name,paramName]);
+				}else{
+					paramName = "name";
+					doRequest("POST", "../run/" + name, runTest,[name,paramName]);
+				}
+			}
+		}
+
+	</script>
+	<div id="menu" class="container">
+		<div class="row">
+			<div class="col-8">
+				<h2><a href="index.html">TFW</a></h2>
+			</div>
+			<div class="col-2"  align="right" style="padding-top:2px">
+				<a id="settings" href="index.html?page=settings">&#x2699;</a>
+			</div>
+			<div class="col-2"  align="right" style="padding-top:2px">
+				<a id="logout" href="index.html?page=logout">Logout</a>
+			</div>
+		</div>
+		<hr>
+	</div>
+	<div class="loader" id="loader"></div>
+
+	<div id="container" class="container">
+		. . .
+	</div>
+</body>
+</html>

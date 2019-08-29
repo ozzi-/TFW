@@ -1,0 +1,78 @@
+	<h2>Info</h2> 
+	What is <b>T</b>(esting) <b>F</b>(rame) <b>W</b>(ork).<br>
+	TFW allows you to execute automated tests in a comfortable manner while persisting the results.<br>
+	TFW consists of two parts, the API which is used to run / monitor tests and retrieve test results, the other being the lightweight UI which uses XHR requests on said API.
+	<br>Further information can be found online on <a href="https://github.com/ozzi-/TFW/blob/master/readme.md">the GitHub repository.</a>
+	<br><br>Using <b><span class="basePath"></span></b> as home.
+	<br><br>
+	<h3>Tests</h3>
+	Tests are a collection of 1 to n coherent tasks.<br>
+	A task points to a executable which is then run in the context of the test.<br>
+	Tests are defined in a JSON file ending with .test under "<span class="basePath"></span>tests".
+	<br>Example of a test:<code><pre>
+	{
+	  "settings": {
+	  },
+	  "test": {
+	    "description": "test_windows",
+	    "tasks": [{
+	      "name": "task1",
+	      "path": "script1.bat",
+	      "timeout": 1
+	      },{
+	      "name": "task2",
+	      "path": "script2.bat",
+	      "timeout": 5
+	      }]
+	  }
+	}</pre></code>
+	<br><br>
+	<h3>Groups</h3>
+	Groups allow the grouping of multiple tests into one and are defined under "<span class="basePath"></span>groups".
+	<code><pre>{
+	"description": "test_windows",
+	"tests": [{
+		"name": "windows"
+	},{
+		"name": "windows2"
+	}]
+}
+	</pre></code>
+	<br><br>
+	<h3>Results</h3>
+	Results are persisted as a JSON file.<br>
+	Results are saved under "<span class="basePath"></span>results\&lt;TEST_NAME&gt;" or in the case of grouped tests "<span class="basePath"></span>results\groups\&lt;GROUP_NAME&gt;"
+	<code><pre>
+	{
+	   "testName":"windows",
+	   "testStartTimestamp":1558427236097,
+	   "testStartString":"2019-05-21 10:27:16",
+	   "results":[
+	      {
+	         "name":"task1",
+	         "passed":"false",
+	         "description":"Script execution longer than timeout",
+	         "output":"\r\nCould not write, waiting",
+	         "errorOutput":"ERROR",
+	         "runTimeInMS":1066,
+	         "startTimestamp":1558427236107,
+	         "endTimestamp":1558427237174,
+	         "startDate":"2019-05-21 10:27:16",
+	         "endDate":"2019-05-21 10:27:17"
+	      }, 
+	      {
+	         "name":"task2",
+	         "passed":"true",
+	         "description":"Script executed successfully",
+	         "output":"Running\r\nOK"
+	         "errorOutput":"",
+	         "runTimeInMS":1018,
+	         "startTimestamp":1558427237174,
+	         "endTimestamp":1558427238193,
+	         "startDate":"2019-05-21 10:27:17",
+	         "endDate":"2019-05-21 10:27:18"
+	      }
+	   ]
+	}
+	</pre></code>
+	<a href="#" onclick="window.location.href='index.html';">Back</a>

@@ -1,0 +1,13 @@
+<form onsubmit="return doLogin()">
+  	<input class="form-control" type="text" id="username" placeholder="Enter Username" name="username" required>
+  	<br>
+ 	<input class="form-control" type="password" id="password" placeholder="Enter Password" name="password" required>
+ 	<br> 
+  	<button class="btn btn-primary" type="submit">Login</button>
+</form>
+<script>
+	function doLogin(){
+		return false;
+		// prevents from password being sent as url search param when login.html is directly opened
+	}
+</script>

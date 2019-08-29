@@ -1,0 +1,42 @@
+<span id="settingsUser">
+	<h2>User Settings</h2>
+	<h4>Change my Password</h4>
+	<form onsubmit="return changeMyPassword()">
+	 	<input class="form-control" type="password" id="myPassword" placeholder="Enter Password" name="myPassword" required>
+	 	<br> 
+	  	<button class="btn btn-success" type="submit">Change Password</button>
+	</form>
+</span>
+
+<span id="settingsAdmin">
+	<br><hr><br>
+	<h2>Admin Settings</h2>
+	<h4>Change other Users Password</h4>
+	<form onsubmit="return changeOthersPassword()">
+  		<input class="form-control" type="text" id="changeUsername" placeholder="Enter Username" name="changeUsername" required><br>
+	 	<input class="form-control" type="password" id="changePassword" placeholder="Enter Password" name="changePassword" required>
+	 	<br> 
+	  	<button class="btn btn-success" type="submit">Change Users Password</button>
+	</form>
+	<br><hr>
+	<h4>Create User</h4>
+	<form onsubmit="return createUser()">
+  		<input class="form-control" type="text" id="createUsername" placeholder="Enter Username" name="createUsername" required><br>
+	 	<input class="form-control" type="password" id="createPassword" placeholder="Enter Password" name="createPassword" required><br>
+		<select class="form-control" id="createRole">
+			<option value="r">r</option>
+			<option value="rw">rw</option>
+			<option value="a">a</option>
+		</select>
+	 	<br> 
+	  	<button class="btn btn-success" type="submit">Create User</button>
+	</form>
+	<br><hr>
+	<h4>Delete User</h4>
+	<form onsubmit="return deleteUser()">
+  		<input class="form-control" type="text" id="deleteUsername" placeholder="Enter Username" name="deleteUsername" required><br>
+	 	<br> 
+	  	<button class="btn btn-danger" type="submit">Delete User</button>
+	</form>
+</span>
+<br><br>
